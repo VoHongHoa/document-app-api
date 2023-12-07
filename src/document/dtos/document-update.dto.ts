@@ -2,7 +2,7 @@
 
 import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
-export class CreateDocumentDto {
+export class UpdateDocumentDto {
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -18,10 +18,6 @@ export class CreateDocumentDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
-
-  @IsNotEmpty()
-  @IsString()
-  url_download: string;
 
   @IsString()
   @IsOptional()

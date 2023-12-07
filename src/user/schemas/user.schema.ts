@@ -7,9 +7,10 @@ export const UserSchema = new Schema(
     password: { type: String, required: true },
     createdBy: { type: Types.ObjectId, ref: 'User' },
     updatedBy: { type: Types.ObjectId, ref: 'User' },
-    birthdate: { type: Date },
-    gender: { type: String, enum: ['Male', 'Female', 'Other'] },
-    isActive: { type: Boolean, default: true },
+    display_name: { type: String },
+    e_point: { type: Number, default: 50 },
+    avatar: { type: String },
+    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
     role: { type: String, enum: ['Admin', 'User'], default: 'User' },
   },
   {
@@ -21,9 +22,10 @@ export interface User extends Document {
   username: string;
   email: string;
   password: string;
-  birthdate?: Date;
-  gender?: 'Male' | 'Female' | 'Other';
-  isActive: boolean;
+  e_point: number;
+  displayName?: string;
+  avatar?: string;
+  status: 'Active' | 'Inactive';
   role: 'Admin' | 'User';
 
   createdAt: Date;

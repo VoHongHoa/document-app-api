@@ -12,6 +12,7 @@ export const DocumentSchema = new mongoose.Schema(
     total_view: { type: Number, default: 0 },
     total_download: { type: Number, default: 0 },
     description: { type: String },
+    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
 
     createdBy: { type: mongoose.Types.ObjectId, ref: 'User' },
     updatedBy: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -29,6 +30,7 @@ export interface Document extends mongoose.Document {
   url_download: string;
   total_view: number;
   total_download: number;
+  status: string;
   description: string;
 
   createdAt: Date;

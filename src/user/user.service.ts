@@ -1,5 +1,3 @@
-// src/users/users.service.ts
-
 import {
   Injectable,
   BadRequestException,
@@ -9,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { CreateUserDto, UpdateUserDto } from './dtos';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -27,6 +26,9 @@ export class UserService {
       throw new BadRequestException('Username or email already exists');
     }
     const createdUser = new this.userModel(dto);
+    const salt: string = await bcrypt.genSalt();
+    const hashPassword: string = await bcrypt.hash(dto.password, salt);
+    createdUser.password = hashPassword;
     return createdUser.save();
   }
 
@@ -34,15 +36,12 @@ export class UserService {
     return this.userModel.find().select('-password').exec();
   }
 
-  async updateUser(
-    userId: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User> {
+  async updateUser(userId: string, updateUser: UpdateUserDto): Promise<User> {
     if (!this.isValidObjectId(userId)) {
       throw new BadRequestException('Invalid user ID');
     }
     return this.userModel
-      .findByIdAndUpdate(userId, updateUserDto, { new: true })
+      .findByIdAndUpdate(userId, updateUser, { new: true })
       .exec();
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Document } from './schemas/document.schema';
-import { CreateDocumentDto } from './dtos';
+import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
 
 @Injectable()
 export class DocumentService {
@@ -23,7 +23,10 @@ export class DocumentService {
     return await this.documentModel.findById(id).exec();
   }
 
-  async update(id: string, updateDocumentDto: Document): Promise<Document> {
+  async update(
+    id: string,
+    updateDocumentDto: UpdateDocumentDto,
+  ): Promise<Document> {
     return await this.documentModel
       .findByIdAndUpdate(id, updateDocumentDto, { new: true })
       .exec();
@@ -31,5 +34,21 @@ export class DocumentService {
 
   async remove(id: string) {
     return await this.documentModel.findByIdAndDelete(id).exec();
+  }
+
+  async findDocumentHomepage(): Promise<Omit<Document, 'url_download'>[]> {
+    return await this.documentModel
+      .find({
+        status: 'Active',
+      })
+      .select('-url_download')
+      .exec();
+  }
+
+  async getDetail(id: string): Promise<Document> {
+    const document = await this.documentModel.findById(id).exec();
+    document.total_view = document.total_view + 1;
+    const updateDocument = await document.save();
+    return updateDocument;
   }
 }

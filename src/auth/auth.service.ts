@@ -52,7 +52,6 @@ export class AuthService {
       }
       const salt: string = await bcrypt.genSalt();
       const hashPassword: string = await bcrypt.hash(dto.password, salt);
-      console.log(dto);
       const user = new this.userModel({
         email: dto.email,
         password: hashPassword,
