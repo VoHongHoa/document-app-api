@@ -3,4 +3,4 @@
 import { model } from 'mongoose';
 import { Document, DocumentSchema } from '../schemas/document.schema';
 
-export const DocumentModel = model<Document>('User', DocumentSchema);
+export const DocumentModel = model<Document>('Document', DocumentSchema);
