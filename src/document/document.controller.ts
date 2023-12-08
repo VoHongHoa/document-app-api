@@ -48,6 +48,14 @@ export class DocumentController {
   getDocumentHomepage(): Promise<Omit<Document, 'url_download'>[]> {
     return this.documnetService.findDocumentHomepage();
   }
+  @Get('/homepage/document-with-many-download')
+  getDocumentWithManyDownload(): Promise<Omit<Document, 'url_download'>[]> {
+    return this.documnetService.getDocumentWithManyDownload();
+  }
+  @Get('/homepage/document-with-many-view')
+  getDocumentWithManyView(): Promise<Omit<Document, 'url_download'>[]> {
+    return this.documnetService.getDocumentWithManyView();
+  }
 
   @Get('/detail/:id')
   getDetail(@Param('id') id: string): Promise<Document> {

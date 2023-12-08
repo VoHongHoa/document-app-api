@@ -14,8 +14,6 @@ export class InvoiceHistoryService {
   constructor(
     @InjectModel('InvoiceHistory')
     private readonly invoiceHistoryModel: Model<InvoiceHistory>,
-    @InjectModel('User')
-    private readonly userModel: Model<User>,
     @InjectModel('Document')
     private readonly documentModel: Model<Document>,
   ) {}
@@ -54,6 +52,16 @@ export class InvoiceHistoryService {
     if (!document) {
       throw new NotFoundException(`Document with ID ${document_id} not found`);
     }
+    const existInvoiceHistory = await this.invoiceHistoryModel.findOne({
+      createdBy: new mongoose.Types.ObjectId(user._id),
+      document_id: new mongoose.Types.ObjectId(document_id),
+    });
+    console.log(existInvoiceHistory);
+    if (existInvoiceHistory) {
+      throw new BadRequestException('Tài liệu đã được mua trước đó');
+    }
+    document.total_download = document.total_download + 1;
+    await document.save();
     const newInvoiceHistory = new this.invoiceHistoryModel({
       document_id: document_id,
       createdBy: user._id,

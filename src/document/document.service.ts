@@ -42,6 +42,37 @@ export class DocumentService {
         status: 'Active',
       })
       .select('-url_download')
+      .limit(8)
+      .exec();
+  }
+
+  async getDocumentWithManyDownload(): Promise<
+    Omit<Document, 'url_download'>[]
+  > {
+    return await this.documentModel
+      .find({
+        status: 'Active',
+        total_download: { $gt: 0 },
+      })
+      .sort({
+        ['total_download']: -1,
+      })
+      .select('-url_download')
+      .limit(8)
+      .exec();
+  }
+
+  async getDocumentWithManyView(): Promise<Omit<Document, 'url_download'>[]> {
+    return await this.documentModel
+      .find({
+        status: 'Active',
+        total_view: { $gt: 0 },
+      })
+      .sort({
+        ['total_view']: -1,
+      })
+      .select('-url_download')
+      .limit(8)
       .exec();
   }
 

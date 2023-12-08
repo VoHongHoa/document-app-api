@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { DocumentModule } from './document/document.module';
 import { InvoiceHistoryModule } from './invoice-history/invoice-history.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { InvoiceHistoryModule } from './invoice-history/invoice-history.module';
     AuthModule,
     DocumentModule,
     InvoiceHistoryModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

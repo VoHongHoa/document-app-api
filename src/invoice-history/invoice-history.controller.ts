@@ -9,6 +9,7 @@ import { InvoiceHistory } from './schemas/invoice-history.schema';
 @Controller('invoice-history')
 export class InvoiceHistoryController {
   constructor(private service: InvoiceHistoryService) {}
+
   @Get(':id')
   create(
     @GetUser() user: User,
