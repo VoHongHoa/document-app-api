@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DocumentModule } from './document/document.module';
 import { InvoiceHistoryModule } from './invoice-history/invoice-history.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { CategoryModule } from './category/category.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     DocumentModule,
     InvoiceHistoryModule,
     DashboardModule,
+    CategoryModule,
+    CollectionModule,
   ],
 })
 export class AppModule {}

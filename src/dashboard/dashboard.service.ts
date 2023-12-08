@@ -44,4 +44,8 @@ export class DashboardService {
       num_of_total_download: numOfTotalDownload,
     };
   }
+
+  async getUserReport() {}
+
+  async getTopUser(query: string) {}
 }
