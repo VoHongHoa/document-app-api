@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
@@ -60,5 +61,15 @@ export class DocumentController {
   @Get('/detail/:id')
   getDetail(@Param('id') id: string): Promise<Document> {
     return this.documnetService.getDetail(id);
+  }
+
+  @Post('/homepage/filter')
+  getFilterDocument(@Body() query: any) {
+    return this.documnetService.getFilterDocument(query);
+  }
+
+  @Get('/get-document-by-collection/:id')
+  async getDocumentByCollection(@Param('id') id: string) {
+    return this.documnetService.getDocumentByCollection(id);
   }
 }

@@ -25,5 +25,13 @@ export class UpdateDocumentDto {
 
   @IsString()
   @IsOptional()
+  category_id: string;
+
+  @IsString()
+  @IsOptional()
+  collection_id: string;
+
+  @IsString()
+  @IsOptional()
   status: 'Active' | 'Inactive';
 }

@@ -40,4 +40,16 @@ export class CategoryService {
     const category = await this.categoryModel.findByIdAndDelete(id);
     return category;
   }
+
+  async getCategorySelect(status: string): Promise<Category[]> {
+    const query: any = {};
+    if (status) {
+      query.status = status;
+    }
+    const categories = await this.categoryModel
+      .find(query)
+      .select('-description')
+      .exec();
+    return categories;
+  }
 }

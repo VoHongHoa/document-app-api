@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Document } from './schemas/document.schema';
 import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
 
@@ -41,6 +41,7 @@ export class DocumentService {
       .find({
         status: 'Active',
       })
+      .sort({ createdAt: -1 })
       .select('-url_download')
       .limit(8)
       .exec();
@@ -81,5 +82,32 @@ export class DocumentService {
     document.total_view = document.total_view + 1;
     const updateDocument = await document.save();
     return updateDocument;
+  }
+
+  async getFilterDocument(
+    searchModel: any,
+  ): Promise<Omit<Document, 'url_download'>[]> {
+    // console.log(searchModel);
+    let query: any = {};
+    if (searchModel.category_id) {
+      query.category_id = new mongoose.Types.ObjectId(searchModel.category_id);
+    }
+    const document = await this.documentModel
+      .find(query)
+      .select('-url_download');
+    return document;
+  }
+
+  async getDocumentByCollection(
+    id: string,
+  ): Promise<Omit<Document, 'url_download'>[]> {
+    const documents = await this.documentModel
+      .find({
+        status: 'Active',
+        collection_id: new mongoose.Types.ObjectId(id),
+      })
+      .select('-url_download');
+
+    return documents;
   }
 }

@@ -25,6 +25,14 @@ export class CreateDocumentDto {
 
   @IsString()
   @IsOptional()
+  category_id: string;
+
+  @IsString()
+  @IsOptional()
+  collection_id: string;
+
+  @IsString()
+  @IsOptional()
   description: string;
 
   @IsString()

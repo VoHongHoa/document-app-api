@@ -40,4 +40,14 @@ export class CollectionService {
     const collection = await this.collectionModel.findByIdAndDelete(id);
     return collection;
   }
+
+  async getCollectionSelect(status: string): Promise<Collection[]> {
+    const collections = await this.collectionModel
+      .find({
+        status,
+      })
+      .select('-description')
+      .exec();
+    return collections;
+  }
 }
