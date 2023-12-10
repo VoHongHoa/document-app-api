@@ -8,7 +8,7 @@ import { InvoiceHistoryModule } from './invoice-history/invoice-history.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { CategoryModule } from './category/category.module';
 import { CollectionModule } from './collection/collection.module';
-import { ReviewModule } from './review/review.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { ReviewModule } from './review/review.module';
     DashboardModule,
     CategoryModule,
     CollectionModule,
-    ReviewModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
