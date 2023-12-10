@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { SignUpDto, SignInDto } from './dtos';
 import * as bcrypt from 'bcrypt';
 import { SignInReponse, SignUpReponse } from './reponse';
+import { UserFromGoogle } from './interface';
 @Injectable()
 export class AuthService {
   constructor(
@@ -70,6 +71,37 @@ export class AuthService {
     }
   }
 
+  async signinWithGoogle(user: UserFromGoogle): Promise<string> {
+    try {
+      const existUser = await this.userModel.findOne({
+        $or: [{ username: user.email }, { email: user.email }],
+      });
+      if (!existUser) {
+        const salt: string = await bcrypt.genSalt();
+        const hashPassword: string = await bcrypt.hash(
+          this.generateRandomString(6),
+          salt,
+        );
+        const newUser = new this.userModel({
+          username: user.email,
+          password: hashPassword,
+          email: user.email,
+          avatar: user.avatar,
+          display_name: user.display_name,
+        });
+        const savedUser = await newUser.save();
+        return await this.signToken({
+          id: savedUser._id,
+        });
+      }
+      return await this.signToken({
+        id: existUser._id,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async signToken(payload: { id: number }): Promise<string> {
     const secret = this.config.get('JWT_SECRET');
     const accessToken: string = await this.jwt.signAsync(payload, {
@@ -77,5 +109,19 @@ export class AuthService {
       secret: secret,
     });
     return accessToken;
+  }
+
+  private generateRandomString(length: number): string {
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    const charsetLength = charset.length;
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charsetLength);
+      result += charset[randomIndex];
+    }
+
+    return result;
   }
 }

@@ -23,7 +23,7 @@ export interface User extends Document {
   email: string;
   password: string;
   e_point: number;
-  displayName?: string;
+  display_name?: string;
   avatar?: string;
   status: 'Active' | 'Inactive';
   role: 'Admin' | 'User';
