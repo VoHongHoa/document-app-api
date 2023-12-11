@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Document } from './schemas/document.schema';
 import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class DocumentService {
@@ -10,13 +11,20 @@ export class DocumentService {
     @InjectModel('Document') private readonly documentModel: Model<Document>,
   ) {}
 
-  async create(createDocumentDto: CreateDocumentDto): Promise<Document> {
+  async create(
+    createDocumentDto: CreateDocumentDto,
+    user: User,
+  ): Promise<Document> {
     const createdDocument = new this.documentModel(createDocumentDto);
+    createdDocument.createdBy = user._id;
     return createdDocument.save();
   }
 
   async findAll(): Promise<Document[]> {
-    return await this.documentModel.find().exec();
+    return await this.documentModel
+      .find()
+      .populate('createdBy', '_id display_name')
+      .exec();
   }
 
   async findOne(id: string): Promise<Document> {
@@ -26,13 +34,24 @@ export class DocumentService {
   async update(
     id: string,
     updateDocumentDto: UpdateDocumentDto,
+    user: User,
   ): Promise<Document> {
     return await this.documentModel
       .findByIdAndUpdate(id, updateDocumentDto, { new: true })
       .exec();
   }
 
-  async remove(id: string) {
+  async remove(id: string, user: User) {
+    if (user.role === 'User') {
+      const document = await this.documentModel.findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        createdBy: user._id,
+      });
+      if (!document) {
+        throw new BadRequestException('Document not found');
+      }
+    }
+
     return await this.documentModel.findByIdAndDelete(id).exec();
   }
 
@@ -44,6 +63,7 @@ export class DocumentService {
       .sort({ createdAt: -1 })
       .select('-url_download')
       .limit(8)
+      .populate('createdBy', '_id display_name')
       .exec();
   }
 
@@ -60,6 +80,7 @@ export class DocumentService {
       })
       .select('-url_download')
       .limit(8)
+      .populate('createdBy', '_id display_name')
       .exec();
   }
 
@@ -74,6 +95,7 @@ export class DocumentService {
       })
       .select('-url_download')
       .limit(8)
+      .populate('createdBy', '_id display_name')
       .exec();
   }
 
@@ -94,7 +116,9 @@ export class DocumentService {
     }
     const document = await this.documentModel
       .find(query)
-      .select('-url_download');
+      .select('-url_download')
+      .populate('createdBy', '_id display_name')
+      .exec();
     return document;
   }
 
@@ -106,7 +130,19 @@ export class DocumentService {
         status: 'Active',
         collection_id: new mongoose.Types.ObjectId(id),
       })
-      .select('-url_download');
+      .select('-url_download')
+      .populate('createdBy', '_id display_name')
+      .exec();
+
+    return documents;
+  }
+  async getDocumentUploadByUser(user: User): Promise<Document[]> {
+    const documents = await this.documentModel
+      .find({
+        status: 'Active',
+        createdBy: user._id,
+      })
+      .exec();
 
     return documents;
   }

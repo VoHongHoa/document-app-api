@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { SignUpDto, SignInDto } from './dtos';
 import * as bcrypt from 'bcrypt';
 import { SignInReponse, SignUpReponse } from './reponse';
-import { UserFromGoogle } from './interface';
+import { JWTPayload, UserFromGoogle } from './interface';
 @Injectable()
 export class AuthService {
   constructor(
@@ -32,6 +32,7 @@ export class AuthService {
       }
       const accessToken = await this.signToken({
         id: user._id,
+        role: user.role,
       });
       return {
         access_token: accessToken,
@@ -61,6 +62,7 @@ export class AuthService {
       const newUser = await user.save();
       const accessToken = await this.signToken({
         id: user._id,
+        role: user.role,
       });
       return {
         access_token: accessToken,
@@ -92,17 +94,19 @@ export class AuthService {
         const savedUser = await newUser.save();
         return await this.signToken({
           id: savedUser._id,
+          role: savedUser.role,
         });
       }
       return await this.signToken({
         id: existUser._id,
+        role: existUser.role,
       });
     } catch (error) {
       throw error;
     }
   }
 
-  async signToken(payload: { id: number }): Promise<string> {
+  async signToken(payload: JWTPayload): Promise<string> {
     const secret = this.config.get('JWT_SECRET');
     const accessToken: string = await this.jwt.signAsync(payload, {
       expiresIn: '1d',

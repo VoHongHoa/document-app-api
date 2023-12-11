@@ -7,6 +7,7 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserFromGoogle } from './interface';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { GoogleGuard } from './guards';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -21,7 +22,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleGuard)
   async googleLoginCallback(
     @GetUser() user: UserFromGoogle,
     @Res() res: Response,

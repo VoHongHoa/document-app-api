@@ -7,42 +7,56 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
 } from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
 import { Document } from './schemas/document.schema';
-import { JwtGuard } from 'src/auth/guards';
+import { AdminGuard, JwtGuard } from 'src/auth/guards';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { User } from 'src/user/schemas/user.schema';
 
 @Controller('document')
 export class DocumentController {
   constructor(private readonly documnetService: DocumentService) {}
-  @UseGuards(JwtGuard)
-  @Post()
-  create(@Body() createDocumentDto: CreateDocumentDto): Promise<Document> {
-    return this.documnetService.create(createDocumentDto);
-  }
-  @UseGuards(JwtGuard)
+  @UseGuards(AdminGuard)
   @Get()
   findAll(): Promise<Document[]> {
     return this.documnetService.findAll();
   }
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Document> {
-    return this.documnetService.findOne(id);
-  }
-  @UseGuards(JwtGuard)
+  @UseGuards(AdminGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateDocumentDto: UpdateDocumentDto,
+    @GetUser() user: User,
   ): Promise<Document> {
-    return this.documnetService.update(id, updateDocumentDto);
+    return this.documnetService.update(id, updateDocumentDto, user);
   }
-  @UseGuards(JwtGuard)
+
+  @UseGuards(AdminGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.documnetService.remove(id);
+  remove(@Param('id') id: string, @GetUser() user: User) {
+    return this.documnetService.remove(id, user);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post()
+  create(
+    @Body() createDocumentDto: CreateDocumentDto,
+    @GetUser() user: User,
+  ): Promise<Document> {
+    return this.documnetService.create(createDocumentDto, user);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('upload/user')
+  getDocumentUploadByUser(@GetUser() user: User): Promise<Document[]> {
+    return this.documnetService.getDocumentUploadByUser(user);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<Document> {
+    return this.documnetService.findOne(id);
   }
 
   @Get('/homepage/all')
