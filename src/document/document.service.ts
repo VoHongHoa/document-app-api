@@ -100,7 +100,10 @@ export class DocumentService {
   }
 
   async getDetail(id: string): Promise<Document> {
-    const document = await this.documentModel.findById(id).exec();
+    const document = await this.documentModel
+      .findById(id)
+      .populate('createdBy', '_id display_name')
+      .exec();
     document.total_view = document.total_view + 1;
     const updateDocument = await document.save();
     return updateDocument;

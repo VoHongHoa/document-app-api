@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f0f932f6-42b2-43dd-9571-315bc74a10d6/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/document-app-api",
+    "appService.deploySubpath": "."
+}

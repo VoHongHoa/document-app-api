@@ -1,5 +1,3 @@
-// document.schema.ts
-
 import * as mongoose from 'mongoose';
 
 export const InvoiceHistorySchema = new mongoose.Schema(

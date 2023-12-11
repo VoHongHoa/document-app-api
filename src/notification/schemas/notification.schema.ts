@@ -1,0 +1,26 @@
+// src/collection/collection.model.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+
+@Schema({ timestamps: true })
+export class Notification extends Document {
+  @Prop({ type: String, required: true })
+  text: string;
+
+  @Prop({ type: String, required: true })
+  theme_image: string;
+
+  @Prop({ type: String })
+  description: string;
+
+  @Prop({ type: String, enum: ['Active', 'Inactive'], default: 'Active' })
+  status: string;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  createdBy: MongooseSchema.Types.ObjectId;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  updatedBy: MongooseSchema.Types.ObjectId;
+}
+
+export const CollectionSchema = SchemaFactory.createForClass(Notification);

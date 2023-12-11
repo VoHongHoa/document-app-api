@@ -9,6 +9,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { CategoryModule } from './category/category.module';
 import { CollectionModule } from './collection/collection.module';
 import { CommentModule } from './comment/comment.module';
+import { EpointHistoryModule } from './epoint-history/epoint-history.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { CommentModule } from './comment/comment.module';
     CategoryModule,
     CollectionModule,
     CommentModule,
+    EpointHistoryModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
