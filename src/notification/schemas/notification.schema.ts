@@ -3,9 +3,6 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Notification extends Document {
-  @Prop({ required: true })
-  message: string;
-
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Document' })
   document: MongooseSchema.Types.ObjectId;
 

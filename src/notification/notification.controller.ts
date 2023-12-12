@@ -12,41 +12,30 @@ import {
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Notification } from './schemas/notification.schema';
-import { JwtGuard } from 'src/auth/guards';
+import { AdminGuard, JwtGuard } from 'src/auth/guards';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { User } from 'src/user/schemas/user.schema';
+import { UpdateDocumentDto } from 'src/document/dtos';
 
-@UseGuards(JwtGuard)
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
-
-  @Post()
-  async create(@Body() notificationDto: Notification): Promise<Notification> {
-    return this.notificationService.createNotification(notificationDto);
-  }
-
+  @UseGuards(JwtGuard)
   @Get()
-  async findAll(): Promise<Notification[]> {
-    return this.notificationService.getAllNotifications();
+  async getUserNotification(@GetUser() user: User): Promise<Notification[]> {
+    return this.notificationService.getAllNotifications(user);
   }
-
+  @UseGuards(JwtGuard)
   @Get(':id')
-  async findOne(@Param('id') notificationId: string): Promise<Notification> {
-    return this.notificationService.getNotificationById(notificationId);
+  async getNotificationById(@Param('id') id: string): Promise<Notification> {
+    return this.notificationService.getNotificationById(id);
   }
-
-  @Put(':id')
-  async update(
-    @Param('id') notificationId: string,
-    @Body() notificationDto: Notification,
+  @UseGuards(AdminGuard)
+  @Post('approve/:id')
+  async approveDocument(
+    @Param('id') id: string,
+    @Body() documentDto: UpdateDocumentDto,
   ): Promise<Notification> {
-    return this.notificationService.updateNotification(
-      notificationId,
-      notificationDto,
-    );
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') notificationId: string): Promise<void> {
-    return this.notificationService.deleteNotification(notificationId);
+    return this.notificationService.approveDocument(id, documentDto);
   }
 }

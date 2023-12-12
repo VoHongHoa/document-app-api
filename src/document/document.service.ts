@@ -4,11 +4,16 @@ import mongoose, { Model } from 'mongoose';
 import { Document } from './schemas/document.schema';
 import { CreateDocumentDto, UpdateDocumentDto } from './dtos';
 import { User } from 'src/user/schemas/user.schema';
+import { Notification } from 'src/notification/schemas/notification.schema';
 
 @Injectable()
 export class DocumentService {
   constructor(
-    @InjectModel('Document') private readonly documentModel: Model<Document>,
+    @InjectModel(Document.name) private readonly documentModel: Model<Document>,
+    @InjectModel(Notification.name)
+    private readonly notificationModel: Model<Notification>,
+    @InjectModel('User')
+    private readonly userModel: Model<User>,
   ) {}
 
   async create(
@@ -17,7 +22,28 @@ export class DocumentService {
   ): Promise<Document> {
     const createdDocument = new this.documentModel(createDocumentDto);
     createdDocument.createdBy = user._id;
-    return createdDocument.save();
+    if (user.role === 'User') {
+      createdDocument.status = 'Inactive';
+
+      const awaitDocument = await createdDocument.save();
+
+      const allAdmins = await this.userModel
+        .find({
+          role: 'Admin',
+        })
+        .exec();
+      allAdmins.forEach(async (admin) => {
+        const newNotification = new this.notificationModel({
+          document: awaitDocument._id,
+          sender: user._id,
+          recipient: admin._id,
+        });
+        await newNotification.save();
+      });
+      return awaitDocument;
+    } else {
+      return createdDocument.save();
+    }
   }
 
   async findAll(): Promise<Document[]> {
