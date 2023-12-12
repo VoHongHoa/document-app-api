@@ -12,7 +12,7 @@ import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { AdminGuard, JwtGuard } from 'src/auth/guards';
-import { CreateUserDto, UpdateUserDto } from './dtos';
+import { CreateUserDto, UpdateProfileUserDto, UpdateUserDto } from './dtos';
 
 @Controller('user')
 export class UserController {
@@ -21,6 +21,15 @@ export class UserController {
   @Get('me')
   async getMe(@GetUser() user: User) {
     return user;
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('update/me')
+  async updateMe(
+    @GetUser() user: User,
+    @Body() updatedUserDto: UpdateProfileUserDto,
+  ) {
+    return this.userService.updateUserProfile(user, updatedUserDto);
   }
 
   @UseGuards(AdminGuard)

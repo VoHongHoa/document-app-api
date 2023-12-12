@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
-import { CreateUserDto, UpdateUserDto } from './dtos';
+import { CreateUserDto, UpdateProfileUserDto, UpdateUserDto } from './dtos';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -42,6 +42,16 @@ export class UserService {
     }
     return this.userModel
       .findByIdAndUpdate(userId, updateUser, { new: true })
+      .exec();
+  }
+
+  async updateUserProfile(
+    user: User,
+    updateUserDto: UpdateProfileUserDto,
+  ): Promise<User> {
+    return await this.userModel
+      .findByIdAndUpdate(user._id, updateUserDto, { new: true })
+      .select('-password')
       .exec();
   }
 
