@@ -8,14 +8,17 @@ import mongoose, { Model } from 'mongoose';
 import { InvoiceHistory } from './schemas/invoice-history.schema';
 import { User } from 'src/user/schemas/user.schema';
 import { Document } from 'src/document/schemas/document.schema';
+import { EPointHistory } from 'src/epoint-history/schemas/epoint-history.schema';
 
 @Injectable()
 export class InvoiceHistoryService {
   constructor(
     @InjectModel('InvoiceHistory')
     private readonly invoiceHistoryModel: Model<InvoiceHistory>,
-    @InjectModel('Document')
+    @InjectModel(Document.name)
     private readonly documentModel: Model<Document>,
+    @InjectModel(EPointHistory.name)
+    private readonly epointHistoryModel: Model<EPointHistory>,
   ) {}
 
   async getDetailInvoice(
@@ -56,7 +59,6 @@ export class InvoiceHistoryService {
       createdBy: new mongoose.Types.ObjectId(user._id),
       document_id: new mongoose.Types.ObjectId(document_id),
     });
-    console.log(existInvoiceHistory);
     if (existInvoiceHistory) {
       throw new BadRequestException('Tài liệu đã được mua trước đó');
     }
@@ -71,7 +73,16 @@ export class InvoiceHistoryService {
     }
     user.e_point = user.e_point - document.price;
     await user.save();
+
     await newInvoiceHistory.save();
+
+    const newEpointHistoryForBuyer = new this.epointHistoryModel({
+      document: document._id,
+      value: -document.price,
+      recipient: user._id,
+    });
+    await newEpointHistoryForBuyer.save();
+
     return document;
   }
 

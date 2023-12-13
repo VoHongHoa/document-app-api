@@ -46,8 +46,8 @@ export class NotificationService {
       throw new NotFoundException('Notification not found');
     }
     notification.isRead === true;
-
-    return await notification.save();
+    await notification.save();
+    return notification;
   }
 
   async approveDocument(
