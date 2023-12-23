@@ -58,6 +58,7 @@ export class AuthService {
         email: dto.email,
         password: hashPassword,
         username: dto.username,
+        display_name: dto.display_name,
       });
       const newUser = await user.save();
       const accessToken = await this.signToken({
