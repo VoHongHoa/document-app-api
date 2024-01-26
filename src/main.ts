@@ -7,7 +7,9 @@ import * as cors from 'cors';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new GlobalExceptionFilter());
-  app.use(cors());
+  app.use(cors({
+    
+  }));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
