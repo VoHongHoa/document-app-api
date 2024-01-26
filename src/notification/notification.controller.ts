@@ -1,15 +1,6 @@
 // notification.controller.ts
 
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Body,
-  Put,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UseGuards } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Notification } from './schemas/notification.schema';
 import { AdminGuard, JwtGuard } from 'src/auth/guards';

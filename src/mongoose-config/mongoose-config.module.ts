@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://dbroot:dbroot@cluster0.k1e2t.mongodb.net/document-app',
-    ),
+    ConfigModule.forRoot(), // Load environment variables
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_CONNECTION_URL'),
+      }),
+    }),
   ],
 })
 export class MongooseConfigModule {}
