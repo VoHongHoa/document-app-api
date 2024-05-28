@@ -12,6 +12,7 @@ import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { EpointHistoryModule } from './epoint-history/epoint-history.module';
 import { SearchModule } from './search/search.module';
+import { ClassModule } from './class/class.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SearchModule } from './search/search.module';
     NotificationModule,
     EpointHistoryModule,
     SearchModule,
+    ClassModule
   ],
 })
 export class AppModule {}
