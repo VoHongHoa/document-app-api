@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "tsc -p tsconfig.build.json",
+    "vercel-build": "npm install && npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
